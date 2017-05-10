@@ -1,7 +1,6 @@
 const int MAX = 8;
 const float PI = 3.1415927;
 const vec3 BGCOLOR = vec3(0.0);
-const vec3 NOI = vec3(-1.0);
 const float INF =  9999999.0;
 vec3 LIGHT_DIR = vec3(0.0, 1.0, 0.5);
 
@@ -65,8 +64,8 @@ float MandelBulbDE(vec3 pos) {
 float traceDE(Ray ray) {
 	float totalDistance = 0.0;
 	int steps;
-    int MaximumRaySteps = 32;
-    int MaxRaySteps = 32;
+    int MaximumRaySteps = 40;
+    int MaxRaySteps = 40;
     float MinimumDistance = 0.0005;
 	for (steps=0; steps < MaximumRaySteps; steps++) {
 		vec3 p = ray.o + totalDistance * ray.d;
@@ -145,6 +144,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     float ar = iResolution.x / iResolution.y;
 	vec2 uv = fragCoord.xy / iResolution.y - vec2(ar * 0.5, 0.5);
 
+    /*
     setupScene();
     vec3 colorSum = vec3(0.0);
     float kernelSize = 2.0;
@@ -156,9 +156,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
         }
     }
     colorSum /= kernelSize * kernelSize;
+	*/
     
     Ray ray = getRay(uv);
     float mandelbulbColor = traceDE(ray) * 1.1 + 0.1;
     
-    fragColor = vec4(vec3(1.0, 0.0, 0.5) * mandelbulbColor, 1.0);
+	fragColor = vec4(vec3(1.0, 0.0, 0.5) * mandelbulbColor, 1.0);
 }

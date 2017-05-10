@@ -1,6 +1,6 @@
 # GPU Computing Experiments
 
-Shadertoy [demo](https://www.shadertoy.com/view/Ms2yDt)
+[Demo](https://www.shadertoy.com/view/Ms2yDt) at shadertoy.com
 
 # Screenshots
 ![mandelbulb](assets/fourth_mandelbulb.png)
