@@ -31,7 +31,7 @@ struct CLContext {
     template <typename T> CLContext set_arg(
         cl_uint arg_id,
         T* data,
-        size_t size,
+        size_t size = 1,
         int buffer_type = CL_MEM_READ_WRITE
     ) {
         cl::Buffer buffer(context, buffer_type, sizeof(T) * size);

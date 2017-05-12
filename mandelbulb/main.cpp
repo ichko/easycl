@@ -1,24 +1,34 @@
 #include "cl-context.hpp"
 
+struct Color {
+    cl_float r, g, b;
+};
 
 int main() {
-    int A[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-    int B[] = { 0, 1, 2, 0, 1, 2, 0, 1, 2, 0 };
-    int C[10];
+    const int width = 10;
+    const int height = 10;
+    const int pixels_cnt = width * height;
+    Color screen_buffer[width * height];
 
     auto context = CLContext()
-        .load_device()
-        .load_src("sum.cl")
-        .load_kernel("simple_add")
-        .set_arg(0, A, 10)
-        .set_arg(1, B, 10)
-        .set_arg(2, C, 10)
-        .run(10)
-        .read_buffer(2, C, 10);
+        .load_device(0, 1)
+        .load_src("shade.cl")
+        .load_kernel("init")
+        .set_arg(0, screen_buffer, pixels_cnt)
+        .set_arg(1, &pixels_cnt)
+        .set_arg(2, &width)
+        .set_arg(3, &height)
+        .run(pixels_cnt)
+        .read_buffer(0, screen_buffer, pixels_cnt);
 
-    std::cout << " result: ";
-    for (int i = 0; i<10; i++) {
-        std::cout << C[i] << " ";
+    for (size_t i = 0; i < width; i++) {
+        for (size_t j = 0; j < height; j++) {
+            std::cout << "[" <<
+                screen_buffer[i * j].r << "," <<
+                screen_buffer[i * j].g << "," <<
+                screen_buffer[i * j].b << "]";
+        }
+        std::cout << std::endl;
     }
 
     return 0;

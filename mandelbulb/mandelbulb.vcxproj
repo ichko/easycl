@@ -155,7 +155,8 @@
     <ClInclude Include="cl-context.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sum.cl" />
+    <None Include="shade.cl" />
+    <None Include="utils.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
