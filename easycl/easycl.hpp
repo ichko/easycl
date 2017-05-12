@@ -7,7 +7,7 @@
 #include <map>
 
 
-struct CLContext {
+struct EasyCL {
 
     cl::Device device;
     cl::Context context;
@@ -16,19 +16,19 @@ struct CLContext {
     cl::CommandQueue queue;
     std::map<size_t, cl::Buffer> buffers;
 
-    CLContext& run(size_t thread_cnt) {
+    EasyCL& run(size_t thread_cnt) {
         queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(thread_cnt), cl::NullRange);
         queue.finish();
 
         return *this;
     }
 
-    template <typename T> CLContext& read_buffer(size_t arg_id, T* out, size_t size) {
+    template <typename T> EasyCL& read_buffer(size_t arg_id, T* out, size_t size) {
         queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out);
         return *this;
     }
 
-    template <typename T> CLContext set_arg(
+    template <typename T> EasyCL set_arg(
         cl_uint arg_id,
         T* data,
         size_t size = 1,
@@ -42,12 +42,12 @@ struct CLContext {
         return *this;
     }
 
-    CLContext& load_kernel(std::string function_name) {
+    EasyCL& load_kernel(std::string function_name) {
         kernel = cl::Kernel(program, function_name.c_str());
         return *this;
     }
 
-    CLContext& load_src(std::string src_file) {
+    EasyCL& load_src(std::string src_file) {
         cl::Program::Sources sources;
 
         std::string kernel_code = read_file(src_file);
@@ -62,7 +62,7 @@ struct CLContext {
         return *this;
     }
 
-    CLContext& load_device(size_t platform_id = 0, size_t device_id = 0) {
+    EasyCL& load_device(size_t platform_id = 0, size_t device_id = 0) {
         //get all platforms (drivers)
         std::vector<cl::Platform> all_platforms;
         cl::Platform::get(&all_platforms);

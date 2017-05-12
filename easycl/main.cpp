@@ -1,4 +1,4 @@
-#include "cl-context.hpp"
+#include "easycl.hpp"
 
 struct Color {
     cl_float r, g, b;
@@ -10,7 +10,7 @@ int main() {
     const int pixels_cnt = width * height;
     Color screen_buffer[width * height];
 
-    auto context = CLContext()
+    auto context = EasyCL()
         .load_device(0, 1)
         .load_src("shade.cl")
         .load_kernel("init")
