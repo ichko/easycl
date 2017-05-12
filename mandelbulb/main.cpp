@@ -1,30 +1,7 @@
-#include <iostream>
-#include <CL/cl.hpp>
+#include "cl-context.hpp";
 
 int main() {
-    //get all platforms (drivers)
-    std::vector<cl::Platform> all_platforms;
-    cl::Platform::get(&all_platforms);
-    if (all_platforms.size() == 0) {
-        std::cout << " No platforms found. Check OpenCL installation!\n";
-        exit(1);
-    }
-    cl::Platform default_platform = all_platforms[0];
-    std::cout << "Num platforms " << all_platforms.size() << std::endl;
-    std::cout << "Using platform: " << default_platform.getInfo<CL_PLATFORM_NAME>() << "\n";
-
-    //get default device of the default platform
-    std::vector<cl::Device> all_devices;
-    default_platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
-    if (all_devices.size() == 0) {
-        std::cout << " No devices found. Check OpenCL installation!\n";
-        exit(1);
-    }
-    std::cout << "Num devides " << all_devices.size() << std::endl;
-    cl::Device default_device = all_devices[1];
-    std::cout << "Using device: " << default_device.getInfo<CL_DEVICE_NAME>() << "\n";
-
-
+    auto default_device = = get_device();
     cl::Context context({ default_device });
 
     cl::Program::Sources sources;
@@ -60,12 +37,6 @@ int main() {
 
 
     //run the kernel
-    /*cl::Kernel simple_add(program, "simple_add");
-    simple_add.setArg(0, buffer_A);
-    simple_add.setArg(0, buffer_B);
-    simple_add.setArg(0, buffer_C);*/
-
-    //alternative way to run the kernel
     cl::Kernel kernel_add=cl::Kernel(program,"simple_add");
     kernel_add.setArg(0,buffer_A);
     kernel_add.setArg(1,buffer_B);
