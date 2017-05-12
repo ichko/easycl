@@ -20,11 +20,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="utils.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="sum.cl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="sum.cl" />
+    <ClInclude Include="cl-context.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

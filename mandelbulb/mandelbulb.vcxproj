@@ -152,7 +152,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="utils.hpp" />
+    <ClInclude Include="cl-context.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sum.cl" />

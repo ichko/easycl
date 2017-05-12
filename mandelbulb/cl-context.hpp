@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <map>
 
 
 struct CLContext {
@@ -13,6 +14,7 @@ struct CLContext {
     cl::Program program;
     cl::Kernel kernel;
     cl::CommandQueue queue;
+    std::map<size_t, cl::Buffer> buffers;
 
     CLContext& run(size_t thread_cnt) {
         queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(thread_cnt), cl::NullRange);
@@ -21,25 +23,21 @@ struct CLContext {
         return *this;
     }
 
-    template <typename T> CLContext& read_buffer(
-        T* out,
-        size_t size,
-        int buffer_type = CL_MEM_READ_WRITE
-    ) {
-        queue.enqueueReadBuffer(buffer_C, CL_TRUE, 0, sizeof(int) * 10, C);
-
+    template <typename T> CLContext& read_buffer(size_t arg_id, T* out, size_t size) {
+        queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out);
         return *this;
     }
 
-    template <typename T> CLContext& set_arg(
-        size_t arg_id = 0,
+    template <typename T> CLContext set_arg(
+        cl_uint arg_id,
         T* data,
         size_t size,
         int buffer_type = CL_MEM_READ_WRITE
     ) {
         cl::Buffer buffer(context, buffer_type, sizeof(T) * size);
         queue.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, data);
-        kernel_add.setArg(arg_id, buffer);
+        kernel.setArg(arg_id, buffer);
+        buffers[arg_id] = buffer;
 
         return *this;
     }
@@ -60,7 +58,7 @@ struct CLContext {
         return *this;
     }
 
-    CLContext& init(int platform_id, int device_id) {
+    CLContext& load_device(size_t platform_id = 0, size_t device_id = 0) {
         //get all platforms (drivers)
         std::vector<cl::Platform> all_platforms;
         cl::Platform::get(&all_platforms);
