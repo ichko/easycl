@@ -6,7 +6,6 @@ vec3 shade(const float u, const float v) {
 
 void kernel init(
     global vec3* screen_buffer,
-    global const int* pixel_cnt,
     global const int* width,
     global const int* height
 ) {

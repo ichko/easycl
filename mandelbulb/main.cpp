@@ -15,9 +15,8 @@ int main() {
         .load_src("shade.cl")
         .load_kernel("init")
         .set_arg(0, screen_buffer, pixels_cnt)
-        .set_arg(1, &pixels_cnt)
-        .set_arg(2, &width)
-        .set_arg(3, &height)
+        .set_arg(1, &width)
+        .set_arg(2, &height)
         .run(pixels_cnt)
         .read_buffer(0, screen_buffer, pixels_cnt);
 
