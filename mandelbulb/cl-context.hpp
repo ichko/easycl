@@ -42,7 +42,12 @@ struct CLContext {
         return *this;
     }
 
-    CLContext& load_kernel(std::string src_file, std::string function_name) {
+    CLContext& load_kernel(std::string function_name) {
+        kernel = cl::Kernel(program, function_name.c_str());
+        return *this;
+    }
+
+    CLContext& load_src(std::string src_file) {
         cl::Program::Sources sources;
 
         std::string kernel_code = read_file(src_file);
@@ -53,7 +58,6 @@ struct CLContext {
             std::cout << " Error building kernel: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) << "\n";
             exit(1);
         }
-        kernel = cl::Kernel(program, function_name.c_str());
 
         return *this;
     }
