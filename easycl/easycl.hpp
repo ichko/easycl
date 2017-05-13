@@ -42,6 +42,18 @@ struct EasyCL {
         return *this;
     }
 
+    template <typename T> EasyCL update_arg(
+        cl_uint arg_id,
+        T* data,
+        size_t size = 1,
+        int buffer_type = CL_MEM_READ_WRITE
+    ) {
+        queue.enqueueWriteBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, data);
+        kernel.setArg(arg_id, buffers[arg_id]);
+
+        return *this;
+    }
+
     EasyCL& load_kernel(std::string function_name) {
         kernel = cl::Kernel(program, function_name.c_str());
         return *this;

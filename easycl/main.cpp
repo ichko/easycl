@@ -1,34 +1,54 @@
 #include "easycl.hpp"
+#include "sdl.hpp"
+#include <time.h>
+#include <chrono>
+#include <ctime>
 
-struct Color {
-    cl_float r, g, b;
-};
+clock_t tStart = clock();
+float get_time() {
+    return (clock() - tStart) / 2000.0;
+}
 
-int main() {
-    const int width = 10;
-    const int height = 10;
-    const int pixels_cnt = width * height;
-    Color screen_buffer[width * height];
+int main(int argc, char** argv) {
+    const size_t width = 600;
+    const size_t height = 600;
+    const size_t pixels_cnt = width * height;
+    cl_float3* screen_buffer = new cl_float3[width * height];
 
-    auto context = EasyCL()
+    auto sdl_context = SDLContext().init(width, height);
+    float time = get_time();
+
+    auto cl = EasyCL()
         .load_device(0, 1)
-        .load_src("shade.cl")
-        .load_kernel("init")
+        .load_src("shader.cl")
+        .load_kernel("start")
         .set_arg(0, screen_buffer, pixels_cnt)
         .set_arg(1, &width)
         .set_arg(2, &height)
+        .set_arg(3, &time)
         .run(pixels_cnt)
         .read_buffer(0, screen_buffer, pixels_cnt);
 
-    for (size_t i = 0; i < width; i++) {
-        for (size_t j = 0; j < height; j++) {
-            std::cout << "[" <<
-                screen_buffer[i * j].r << "," <<
-                screen_buffer[i * j].g << "," <<
-                screen_buffer[i * j].b << "]";
-        }
-        std::cout << std::endl;
+    while (true) {
+        time = get_time();
+        cl
+            .update_arg(3, &time)
+            .run(pixels_cnt)
+            .read_buffer(0, screen_buffer, pixels_cnt);
+        sdl_context.render(screen_buffer);
     }
+    sdl_context.destroy();
+    delete[] screen_buffer;
+
+    //for (size_t i = 0; i < width; i++) {
+    //    for (size_t j = 0; j < height; j++) {
+    //        std::cout << "[" <<
+    //            screen_buffer[i * j].x << "," <<
+    //            screen_buffer[i * j].y << "," <<
+    //            screen_buffer[i * j].z << "]";
+    //    }
+    //    std::cout << std::endl;
+    //}
 
     return 0;
 }
