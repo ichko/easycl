@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     const size_t width = 600;
     const size_t height = 600;
     const size_t pixels_cnt = width * height;
-    cl_float3* screen_buffer = new cl_float3[width * height];
+    int* screen_buffer = new int[width * height];
 
     auto sdl_context = SDLContext().init(width, height);
     float time = get_time();
