@@ -1,6 +1,5 @@
 # GPU Computing Experiments
-EasyCL - OpenCL wrapper for easy GPGPU computing.
-[Demo](https://www.shadertoy.com/view/Ms2yDt) at shadertoy.com
+EasyCL - OpenCL wrapper for easy GPGPU computing. Mandelbulb [demo](https://www.shadertoy.com/view/Ms2yDt) at shadertoy.com
 
 # Screenshots
 ![mandelbulb](assets/fourth_mandelbulb.png)
