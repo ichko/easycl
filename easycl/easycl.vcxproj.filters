@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.cl">
+      <Filter>cl</Filter>
+    </None>
+    <None Include="marcher.cl">
+      <Filter>cl</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="hpp">
+      <UniqueIdentifier>{f6918d2b-af7d-4595-8dc3-aed71c75bff2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cl">
+      <UniqueIdentifier>{3165bfd0-65ff-4b06-8d8c-3f5a60923523}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="easycl.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="easysdl.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

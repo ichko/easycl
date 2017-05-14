@@ -20,14 +20,14 @@ int main(int argc, char** argv) {
         .read_buffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
 
     while (!easysdl.key_down(SDLK_ESCAPE)) {
+        easysdl
+            .tick()
+            .render();
+
         easycl
             .update_arg(3, &easysdl.timer)
             .run(easysdl.screen_buffer_size)
             .read_buffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
-
-        easysdl
-            .tick()
-            .render();
     }
     easysdl.destroy();
 
