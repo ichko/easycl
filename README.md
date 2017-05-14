@@ -1,5 +1,5 @@
 # GPU Computing Experiments
-
+EasyCL - OpenCL wrapper for easy GPGPU computing.
 [Demo](https://www.shadertoy.com/view/Ms2yDt) at shadertoy.com
 
 # Screenshots
