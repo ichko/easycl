@@ -49,7 +49,6 @@ struct EasyCL {
         int buffer_type = CL_MEM_READ_WRITE
     ) {
         queue.enqueueWriteBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, data);
-        kernel.setArg(arg_id, buffers[arg_id]);
 
         return *this;
     }

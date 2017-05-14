@@ -5,8 +5,8 @@
 int main(int argc, char** argv) {
     auto easysdl = EasySDL()
         .init()
-        //.set_window(500, 500);
-        .set_window_full_screen();
+        .set_window(500, 500);
+        //.set_window_full_screen();
 
     auto easycl = EasyCL()
         .load_device(0, 1)

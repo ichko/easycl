@@ -5,7 +5,7 @@ typedef struct {
 
 ray calc_ray(float2 uv, float time) {
     ray r;
-    r.o = (float3)(time, time * 2.0, 300.0);
+    r.o = (float3)(-3.0, 0.0, 0.0);
     //r.o = (float3)(time * 5, time * 5, -3.0);
     r.d = normalize((float3)(1.0, uv));
 
@@ -52,7 +52,7 @@ float march(ray r, float time) {
     float min_distance = 0.00005;
     for (steps = 0; steps < max_ray_steps; ++steps) {
         float3 p = r.o + total_dist * r.d;
-        float distance = sphere_de(p, time);
+        float distance = mandelbulb_de(p, time);
         total_dist += distance;
         if (distance < min_distance) break;
     }
