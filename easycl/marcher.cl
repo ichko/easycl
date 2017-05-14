@@ -48,13 +48,14 @@ float mandelbulb_de(float3 pos, float time) {
 float march(ray r, float time) {
     float total_dist = 0.0;
     int steps;
-    int max_ray_steps = 32;
-    float min_distance = 0.00005;
+    int max_ray_steps = 25;
+    float min_distance = 0.005;
     for (steps = 0; steps < max_ray_steps; ++steps) {
         float3 p = r.o + total_dist * r.d;
         float distance = mandelbulb_de(p, time);
         total_dist += distance;
         if (distance < min_distance) break;
     }
+
     return 1.0 - (float)steps / (float)max_ray_steps;
 }

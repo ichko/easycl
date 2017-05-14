@@ -12,6 +12,7 @@ struct EasySDL {
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_Texture *texture;
+    SDL_Event event;
 
     size_t width;
     size_t height;
@@ -19,8 +20,10 @@ struct EasySDL {
     Uint32* screen_buffer;
 
     float timer;
-    clock_t start_time;
-    SDL_Event event;
+    clock_t program_start;
+    float delta_t;
+    clock_t frame_start;
+    int fps;
 
     EasySDL& set_window_full_screen() {
         SDL_DisplayMode dm;
@@ -49,24 +52,37 @@ struct EasySDL {
     }
 
     EasySDL& init() {
-        start_time = clock();
+        program_start = clock();
+        frame_start = clock();
+        delta_t = 0.0f;
+        fps = 0;
         event = SDL_Event();
         SDL_Init(SDL_INIT_VIDEO);
         return *this;
     }
 
-    void render() {
+    EasySDL& render() {
         SDL_UpdateTexture(texture, NULL, screen_buffer, int(width * sizeof(Uint32)));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
+
+        return *this;
     }
 
     float get_time() {
-        return (clock() - start_time) / 2000.0f;
+        return (clock() - program_start) / 1000.0f;
+    }
+
+    EasySDL& set_title(std::string title = "") {
+        SDL_SetWindowTitle(window, title.c_str());
+        return *this;
     }
 
     EasySDL& tick() {
         timer = get_time();
+        delta_t = (clock() - frame_start) / 1000.0f;
+        frame_start = clock();
+        fps = int(1000 / (delta_t * 1000));
         SDL_PollEvent(&event);
 
         return *this;

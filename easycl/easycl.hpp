@@ -16,8 +16,8 @@ struct EasyCL {
     cl::CommandQueue queue;
     std::map<size_t, cl::Buffer> buffers;
 
-    EasyCL& run(size_t thread_cnt) {
-        queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(thread_cnt), cl::NullRange);
+    EasyCL& run(size_t global_cnt, cl::NDRange local_cnt = cl::NullRange) {
+        queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(global_cnt), cl::NDRange(local_cnt));
         queue.finish();
 
         return *this;

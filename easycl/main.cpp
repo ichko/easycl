@@ -5,7 +5,7 @@
 int main(int argc, char** argv) {
     auto easysdl = EasySDL()
         .init()
-        .set_window(500, 500);
+        .set_window(512, 512);
         //.set_window_full_screen();
 
     auto easycl = EasyCL()
@@ -22,7 +22,8 @@ int main(int argc, char** argv) {
     while (!easysdl.key_down(SDLK_ESCAPE)) {
         easysdl
             .tick()
-            .render();
+            .render()
+            .set_title("FPS: " + std::to_string(easysdl.fps));
 
         easycl
             .update_arg(3, &easysdl.timer)
