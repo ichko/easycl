@@ -159,7 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="easycl.hpp" />
-    <ClInclude Include="sdl.hpp" />
+    <ClInclude Include="easysdl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.cl" />
