@@ -16,19 +16,19 @@ struct EasyCL {
     cl::CommandQueue queue;
     std::map<size_t, cl::Buffer> buffers;
 
-    EasyCL& run(size_t global_cnt, cl::NDRange local_cnt = cl::NullRange) {
+    EasyCL& Run(size_t global_cnt, cl::NDRange local_cnt = cl::NullRange) {
         queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(global_cnt), cl::NDRange(local_cnt));
         queue.finish();
 
         return *this;
     }
 
-    template <typename T> EasyCL& read_buffer(size_t arg_id, T* out, size_t size) {
+    template <typename T> EasyCL& ReadBuffer(size_t arg_id, T* out, size_t size) {
         queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out);
         return *this;
     }
 
-    template <typename T> EasyCL set_arg(
+    template <typename T> EasyCL SetArg(
         cl_uint arg_id,
         T* data,
         size_t size = 1,
@@ -42,7 +42,7 @@ struct EasyCL {
         return *this;
     }
 
-    template <typename T> EasyCL update_arg(
+    template <typename T> EasyCL UpdateArg(
         cl_uint arg_id,
         T* data,
         size_t size = 1,
@@ -53,15 +53,15 @@ struct EasyCL {
         return *this;
     }
 
-    EasyCL& load_kernel(std::string function_name) {
+    EasyCL& LoadKernel(std::string function_name) {
         kernel = cl::Kernel(program, function_name.c_str());
         return *this;
     }
 
-    EasyCL& load_src(std::string src_file) {
+    EasyCL& LoadSrc(std::string src_file) {
         cl::Program::Sources sources;
 
-        std::string kernel_code = read_file(src_file);
+        std::string kernel_code = ReadFile(src_file);
         sources.push_back({ kernel_code.c_str(), kernel_code.length() });
 
         program = cl::Program(context, sources);
@@ -73,7 +73,7 @@ struct EasyCL {
         return *this;
     }
 
-    EasyCL& load_device(size_t platform_id = 0, size_t device_id = 0) {
+    EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
         //get all platforms (drivers)
         std::vector<cl::Platform> all_platforms;
         cl::Platform::get(&all_platforms);
@@ -98,7 +98,7 @@ struct EasyCL {
         return *this;
     }
 
-    static std::string read_file(std::string file_name) {
+    static std::string ReadFile(std::string file_name) {
         std::ifstream file;
         file.open(file_name);
         std::stringstream str_stream;

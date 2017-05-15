@@ -25,18 +25,18 @@ struct EasySDL {
     clock_t frame_start;
     int fps;
 
-    EasySDL& set_window_full_screen() {
+    EasySDL& SetWindowFullscreen() {
         SDL_DisplayMode dm;
         SDL_GetDesktopDisplayMode(0, &dm);
-        return set_window(dm.w, dm.h);
+        return SetWindow(dm.w, dm.h);
     }
 
-    bool key_down(int key_type) {
+    bool KeyDown(int key_type) {
         return event.type == SDL_KEYDOWN &&
             event.key.keysym.sym == key_type;
     }
 
-    EasySDL& set_window(size_t w, size_t h, bool full_screen = false) {
+    EasySDL& SetWindow(size_t w, size_t h, bool full_screen = false) {
         width = w;
         height = h;
         screen_buffer_size = w * h;
@@ -51,7 +51,7 @@ struct EasySDL {
         return *this;
     }
 
-    EasySDL& init() {
+    EasySDL& Init() {
         program_start = clock();
         frame_start = clock();
         delta_t = 0.0f;
@@ -61,7 +61,7 @@ struct EasySDL {
         return *this;
     }
 
-    EasySDL& render() {
+    EasySDL& Render() {
         SDL_UpdateTexture(texture, NULL, screen_buffer, int(width * sizeof(Uint32)));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
@@ -69,17 +69,17 @@ struct EasySDL {
         return *this;
     }
 
-    float get_time() {
+    float GetTime() {
         return (clock() - program_start) / 1000.0f;
     }
 
-    EasySDL& set_title(std::string title = "") {
+    EasySDL& SetTitle(std::string title = "") {
         SDL_SetWindowTitle(window, title.c_str());
         return *this;
     }
 
-    EasySDL& tick() {
-        timer = get_time();
+    EasySDL& Tick() {
+        timer = GetTime();
         delta_t = (clock() - frame_start) / 1000.0f;
         frame_start = clock();
         fps = int(1000 / (delta_t * 1000));
@@ -88,7 +88,7 @@ struct EasySDL {
         return *this;
     }
 
-    void destroy() {
+    void Destroy() {
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_DestroyTexture(texture);

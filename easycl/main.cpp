@@ -4,33 +4,33 @@
 
 int main(int argc, char** argv) {
     auto easysdl = EasySDL()
-        .init()
-        .set_window(512, 512);
+        .Init()
+        .SetWindow(512, 512);
         //.set_window_full_screen();
 
     auto easycl = EasyCL()
-        .load_device(0, 1)
-        .load_src("shader.cl")
-        .load_kernel("start")
-        .set_arg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
-        .set_arg(1, &easysdl.width)
-        .set_arg(2, &easysdl.height)
-        .set_arg(3, &easysdl.timer)
-        .run(easysdl.screen_buffer_size)
-        .read_buffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
+        .LoadDevice(0, 0)
+        .LoadSrc("shader.cl")
+        .LoadKernel("start")
+        .SetArg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
+        .SetArg(1, &easysdl.width)
+        .SetArg(2, &easysdl.height)
+        .SetArg(3, &easysdl.timer)
+        .Run(easysdl.screen_buffer_size)
+        .ReadBuffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
 
-    while (!easysdl.key_down(SDLK_ESCAPE)) {
+    while (!easysdl.KeyDown(SDLK_ESCAPE)) {
         easysdl
-            .tick()
-            .render()
-            .set_title("FPS: " + std::to_string(easysdl.fps));
+            .Tick()
+            .Render()
+            .SetTitle("FPS: " + std::to_string(easysdl.fps));
 
         easycl
-            .update_arg(3, &easysdl.timer)
-            .run(easysdl.screen_buffer_size)
-            .read_buffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
+            .UpdateArg(3, &easysdl.timer)
+            .Run(easysdl.screen_buffer_size)
+            .ReadBuffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
     }
-    easysdl.destroy();
+    easysdl.Destroy();
 
     return 0;
 }
