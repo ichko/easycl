@@ -1,7 +1,7 @@
 # EasyCL - OpenCL wrapper for easy GPGPU computing
 EasyCL - OpenCL wrapper for easy GPGPU computing. Mandelbulb [demo](https://www.shadertoy.com/view/Ms2yDt) at shadertoy.com
 
-### API
+## API
 ```cpp
 EasyCL()
     .LoadDevice(0, 0) // Platform and device id
@@ -12,11 +12,11 @@ EasyCL()
     .ReadBuffer(arg_id, data, data_size);
 ```
 
-### Example - mandelbulb ray marcher
+## Example - mandelbulb ray marcher
 Setup OpenCL and SDL2 to run the example.
 
 
-main.cpp src
+### main.cpp
 ```cpp
 #include "easycl.hpp"
 #include "easysdl.hpp"
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-shader.cl
+### shader.cl
 ```cl
 #include "marcher.cl"
 
