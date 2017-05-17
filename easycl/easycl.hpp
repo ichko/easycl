@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CL/cl2.hpp>
+#include <CL/cl.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -16,8 +16,8 @@ struct EasyCL {
     cl::CommandQueue queue;
     std::map<size_t, cl::Buffer> buffers;
 
-    EasyCL& Run(size_t global_cnt, cl::NDRange local_cnt = cl::NullRange) {
-        queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(global_cnt), cl::NDRange(local_cnt));
+    EasyCL& Run(cl::NDRange global_range, cl::NDRange local_range = cl::NullRange) {
+        queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
         queue.finish();
 
         return *this;
