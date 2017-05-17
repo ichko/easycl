@@ -3,7 +3,7 @@
 float3 shade(float2 uv, float time) {
     ray r = calc_ray(uv, time);
     float i = march(r, time);
-    return (float3)(0.2, i, i);
+    return (float3)(i, 0, i / 3);
 }
 
 void kernel start(
