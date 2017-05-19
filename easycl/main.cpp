@@ -2,14 +2,14 @@
 #include "easysdl.hpp"
 
 
-int main(int argc, char** argv) {
+void init() {
     auto easysdl = EasySDL()
         .Init()
         .SetWindow(500, 500);
-        //.SetWindowFullscreen();
+    //.SetWindowFullscreen();
 
     auto easycl = EasyCL()
-        .LoadDevice(0, 1)
+        .LoadDevice(0, 0)
         .LoadSrc("shader.cl")
         .LoadKernel("start")
         .SetArg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
@@ -30,6 +30,15 @@ int main(int argc, char** argv) {
                       "Time: " + std::to_string(easysdl.timer));
     }
     easysdl.Destroy();
+}
+
+int main(int argc, char** argv) {
+    try {
+        init();
+    }
+    catch (std::string error) {
+        std::cout << "Failed with error: " << error << std::endl;
+    }
 
     return 0;
 }
