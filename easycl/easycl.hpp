@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CL/cl.hpp>
+#include <CL/cl2.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,16 +15,25 @@ struct EasyCL {
     cl::Kernel kernel;
     cl::CommandQueue queue;
     std::map<size_t, cl::Buffer> buffers;
+    int error;
+
+    void AssertSuccess(int result, std::string at = "") {
+        if (result < 0) {
+            error = result;
+            throw "[" + at + "] " + std::to_string(result);
+        }
+    }
+
 
     EasyCL& Run(cl::NDRange global_range, cl::NDRange local_range = cl::NullRange) {
-        queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range);
-        queue.finish();
+        AssertSuccess(queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range), "queue.enqueueNDRangeKernel");
+        AssertSuccess(queue.finish(), "queue.finish");
 
         return *this;
     }
 
     template <typename T> EasyCL& ReadBuffer(size_t arg_id, T* out, size_t size) {
-        queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out);
+        AssertSuccess(queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out), "queue.enqueueReadBuffer");
         return *this;
     }
 
@@ -35,8 +44,8 @@ struct EasyCL {
         int buffer_type = CL_MEM_READ_WRITE
     ) {
         cl::Buffer buffer(context, buffer_type, sizeof(T) * size);
-        queue.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, data);
-        kernel.setArg(arg_id, buffer);
+        AssertSuccess(queue.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, data), "SetArg:queue.enqueueWriteBuffer");
+        AssertSuccess(kernel.setArg(arg_id, buffer), "kernel.setArg");
         buffers[arg_id] = buffer;
 
         return *this;
@@ -48,7 +57,7 @@ struct EasyCL {
         size_t size = 1,
         int buffer_type = CL_MEM_READ_WRITE
     ) {
-        queue.enqueueWriteBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, data);
+        AssertSuccess(queue.enqueueWriteBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, data), "UpdateArg:queue.enqueueWriteBuffer");
 
         return *this;
     }
@@ -74,6 +83,8 @@ struct EasyCL {
     }
 
     EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
+        error = 0;
+
         //get all platforms (drivers)
         std::vector<cl::Platform> all_platforms;
         cl::Platform::get(&all_platforms);
