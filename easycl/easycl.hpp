@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CL/cl2.hpp>
+#include <CL/cl.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
