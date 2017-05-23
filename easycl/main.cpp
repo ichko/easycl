@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 
         try {
             auto easycl = EasyCL()
-                .LoadDevice(0, 1)
+                .LoadDevice(0, 0)
                 .LoadSrc("shader.cl")
                 .LoadKernel("start")
                 .SetArg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
@@ -31,14 +31,13 @@ int main(int argc, char** argv) {
                     .SetTitle("FPS: " + std::to_string(easysdl.fps) + ", " +
                               "Time: " + std::to_string(easysdl.timer));
             }
-            break;
+            easysdl.Destroy();
         }
         catch (std::string error) {
             std::cout << "Failed with error: " << error << std::endl;
+            easysdl.Destroy();
             std::cin.get();
         }
-
-        easysdl.Destroy();
     }
 
     return 0;

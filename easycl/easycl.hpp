@@ -1,5 +1,7 @@
 #pragma once
 
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+
 #include <CL/cl.hpp>
 #include <iostream>
 #include <fstream>
@@ -18,12 +20,11 @@ struct EasyCL {
     int error;
 
     void AssertSuccess(int result, std::string at = "") {
-        if (result < 0) {
+        if (result != CL_SUCCESS) {
             error = result;
             throw "[" + at + "] " + std::to_string(result);
         }
     }
-
 
     EasyCL& Run(cl::NDRange global_range, cl::NDRange local_range = cl::NullRange) {
         AssertSuccess(queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range), "queue.enqueueNDRangeKernel");
@@ -74,35 +75,30 @@ struct EasyCL {
         sources.push_back({ kernel_code.c_str(), kernel_code.length() });
 
         program = cl::Program(context, sources);
-        if (program.build({ device }) != CL_SUCCESS) {
-            std::cout << " Error building kernel: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) << "\n";
-            exit(1);
-        }
+        auto build_result = program.build({ device });
+        AssertSuccess(build_result, "Error building kernel: " + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
 
+        std::cout << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
         return *this;
     }
 
     EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
         error = 0;
 
-        //get all platforms (drivers)
         std::vector<cl::Platform> all_platforms;
         cl::Platform::get(&all_platforms);
-        if (all_platforms.size() == 0) {
-            std::cout << " No platforms found. Check OpenCL installation!\n";
-            exit(1);
-        }
+        AssertSuccess(all_platforms.size() == 0 ? -1 : 0, "No platforms found. Check OpenCL installation!");
+
         cl::Platform platform = all_platforms[platform_id];
-        std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+        //std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << "\n";
 
         std::vector<cl::Device> all_devices;
         platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
-        if (all_devices.size() == 0) {
-            std::cout << " No devices found. Check OpenCL installation!\n";
-            exit(1);
-        }
+        AssertSuccess(all_devices.size() == 0 ? -1 : 0, "No devices found. Check OpenCL installation!");
+
         device = all_devices[device_id];
-        std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
+        //std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
+
         context = cl::Context({ device });
         queue = cl::CommandQueue(context, device);
 
