@@ -4,18 +4,37 @@
 
 int main(int argc, char** argv) {
     while (true) {
-        int width = 500, height = 500,
+        std::cout << "# Parallel programming" << std::endl << std::endl;
+        int platform_id = 0, device_id = 1,
+            width = 500, height = 500,
             local_size_width = 0, local_size_heihgt = 0;
+        auto local_size = cl::NullRange;
 
         std::cout << "Input size (width height): " << std::endl;
         std::cin >> width >> height;
-        std::cout << "Input local sizes (set -1 for default): " << std::endl;
-        std::cin >> local_size_width >> local_size_heihgt;
 
-        auto local_size = cl::NDRange(local_size_width, local_size_heihgt);
-        if (local_size_width < 0 || local_size_heihgt < 0) {
-            local_size = cl::NullRange;
+        // std::cout << "Input local sizes (set -1 for default): " << std::endl;
+        // std::cin >> local_size_width >> local_size_heihgt;
+        if (local_size_width > 0 || local_size_heihgt > 0) {
+            local_size = cl::NDRange(local_size_width, local_size_heihgt);
         }
+
+        // List paltforms and devices
+        std::cout << std::endl << std::endl << "Platforms and devices: " << std::endl;
+        auto all_platforms = EasyCL::GetPlatforms();
+        for (int i = 0; i < all_platforms.size(); i++) {
+            std::cout << i << ") " <<
+                EasyCL::GetName<CL_PLATFORM_NAME>(all_platforms[i]) << std::endl;
+
+            auto all_devices = EasyCL::GetDevices(all_platforms[i]);
+            for (int j = 0; j < all_devices.size(); j++) {
+                std::cout << "   " << j << ") "<<
+                    EasyCL::GetName<CL_DEVICE_NAME>(all_devices[j]) << std::endl;
+            }
+        }
+
+        std::cout << std::endl << "Choose platform and device id (ex.: 0 1): " << std::endl;
+        std::cin >> platform_id >> device_id;
 
         auto easysdl = EasySDL()
             .Init()
@@ -24,7 +43,7 @@ int main(int argc, char** argv) {
 
         try {
             auto easycl = EasyCL()
-                .LoadDevice(0, 1)
+                .LoadDevice(platform_id, device_id)
                 .LoadSrc("shader.cl")
                 .LoadKernel("start")
                 .SetArg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
@@ -54,6 +73,7 @@ int main(int argc, char** argv) {
             // Block console
             std::cin.ignore();
             std::cin.get();
+            system("cls");
         }
     }
 

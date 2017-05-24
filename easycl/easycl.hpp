@@ -97,6 +97,10 @@ struct EasyCL {
         return all_devices;
     }
 
+    template <cl_int T, typename O> static std::string GetName(O object) {
+        return object.getInfo<T>();
+    }
+
     EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
         error = 0;
 
@@ -105,14 +109,14 @@ struct EasyCL {
                       "No platforms found. Check OpenCL installation!");
 
         auto platform = all_platforms[platform_id];
-        //std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << "\n";
+        // std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << "\n";
 
         auto all_devices = GetDevices(platform);
         AssertSuccess(all_devices.size() == 0 ? -1 : 0,
                       "No devices found. Check OpenCL installation!");
 
         device = all_devices[device_id];
-        //std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
+        // std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
 
         context = cl::Context({ device });
         queue = cl::CommandQueue(context, device);

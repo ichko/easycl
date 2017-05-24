@@ -96,4 +96,8 @@ struct EasySDL {
         SDL_Quit();
     }
 
+    ~EasySDL() {
+        // Destroy();
+    }
+
 };
