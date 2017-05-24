@@ -27,14 +27,16 @@ struct EasyCL {
     }
 
     EasyCL& Run(cl::NDRange global_range, cl::NDRange local_range = cl::NullRange) {
-        AssertSuccess(queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range), "queue.enqueueNDRangeKernel");
+        AssertSuccess(queue.enqueueNDRangeKernel(kernel, cl::NullRange, global_range, local_range),
+                      "queue.enqueueNDRangeKernel");
         AssertSuccess(queue.finish(), "queue.finish");
 
         return *this;
     }
 
     template <typename T> EasyCL& ReadBuffer(size_t arg_id, T* out, size_t size) {
-        AssertSuccess(queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out), "queue.enqueueReadBuffer");
+        AssertSuccess(queue.enqueueReadBuffer(buffers[arg_id], CL_TRUE, 0, sizeof(T) * size, out),
+                      "queue.enqueueReadBuffer");
         return *this;
     }
 
@@ -45,8 +47,10 @@ struct EasyCL {
         int buffer_type = CL_MEM_READ_WRITE
     ) {
         cl::Buffer buffer(context, buffer_type, sizeof(T) * size);
-        AssertSuccess(queue.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, data), "SetArg:queue.enqueueWriteBuffer");
-        AssertSuccess(kernel.setArg(arg_id, buffer), "kernel.setArg");
+        AssertSuccess(queue.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, data),
+                      "SetArg:queue.enqueueWriteBuffer");
+        AssertSuccess(kernel.setArg(arg_id, buffer),
+                      "kernel.setArg");
         buffers[arg_id] = buffer;
 
         return *this;
@@ -78,23 +82,34 @@ struct EasyCL {
         auto build_result = program.build({ device });
         AssertSuccess(build_result, "Error building kernel: " + program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device));
 
-        std::cout << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device);
         return *this;
+    }
+
+    static std::vector<cl::Platform> GetPlatforms() {
+        std::vector<cl::Platform> all_platforms;
+        cl::Platform::get(&all_platforms);
+        return all_platforms;
+    }
+
+    static std::vector<cl::Device> GetDevices(cl::Platform& platform) {
+        std::vector<cl::Device> all_devices;
+        platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
+        return all_devices;
     }
 
     EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
         error = 0;
 
-        std::vector<cl::Platform> all_platforms;
-        cl::Platform::get(&all_platforms);
-        AssertSuccess(all_platforms.size() == 0 ? -1 : 0, "No platforms found. Check OpenCL installation!");
+        auto all_platforms = GetPlatforms();
+        AssertSuccess(all_platforms.size() == 0 ? -1 : 0,
+                      "No platforms found. Check OpenCL installation!");
 
-        cl::Platform platform = all_platforms[platform_id];
+        auto platform = all_platforms[platform_id];
         //std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << "\n";
 
-        std::vector<cl::Device> all_devices;
-        platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
-        AssertSuccess(all_devices.size() == 0 ? -1 : 0, "No devices found. Check OpenCL installation!");
+        auto all_devices = GetDevices(platform);
+        AssertSuccess(all_devices.size() == 0 ? -1 : 0,
+                      "No devices found. Check OpenCL installation!");
 
         device = all_devices[device_id];
         //std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
