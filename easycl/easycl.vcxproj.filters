@@ -32,5 +32,8 @@
     <ClInclude Include="canvas-context.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
+    <ClInclude Include="utils.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

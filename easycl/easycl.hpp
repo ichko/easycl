@@ -3,10 +3,9 @@
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 
 #include <CL/cl.hpp>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <map>
+
+#include "utils.hpp"
 
 
 struct EasyCL {
@@ -16,6 +15,8 @@ struct EasyCL {
     cl::Program program;
     cl::Kernel kernel;
     cl::CommandQueue queue;
+    cl::Program::Sources sources;
+
     std::map<size_t, cl::Buffer> buffers;
     int error;
 
@@ -73,8 +74,6 @@ struct EasyCL {
     }
 
     EasyCL& LoadSrc(std::string src_file) {
-        cl::Program::Sources sources;
-
         std::string kernel_code = ReadFile(src_file);
         sources.push_back({ kernel_code.c_str(), kernel_code.length() });
 
@@ -122,16 +121,6 @@ struct EasyCL {
         queue = cl::CommandQueue(context, device);
 
         return *this;
-    }
-
-    static std::string ReadFile(std::string file_name) {
-        std::ifstream file;
-        file.open(file_name);
-        std::stringstream str_stream;
-        str_stream << file.rdbuf();
-        file.close();
-
-        return str_stream.str();
     }
 
 };

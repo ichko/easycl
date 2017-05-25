@@ -162,6 +162,7 @@
     <ClInclude Include="easysdl.hpp" />
     <ClInclude Include="canvas.hpp" />
     <ClInclude Include="canvas-context.hpp" />
+    <ClInclude Include="utils.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.cl" />

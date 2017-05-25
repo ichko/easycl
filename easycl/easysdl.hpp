@@ -22,35 +22,23 @@ struct EasySDL : public Canvas {
     clock_t frame_start;
     int fps;
 
-    EasySDL() {
+    EasySDL(size_t width, size_t height) {
         program_start = clock();
         frame_start = clock();
         delta_t = 0.0f;
         fps = 0;
         event = SDL_Event();
         SDL_Init(SDL_INIT_VIDEO);
-    }
 
-    EasySDL& SetWindowFullscreen() {
-        SDL_DisplayMode dm;
-        SDL_GetDesktopDisplayMode(0, &dm);
-        return SetSize(dm.w, dm.h);
+        Canvas::SetSize(width, height);
+        SDL_CreateWindowAndRenderer(int(width), int(height), 0, &window, &renderer);
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, int(width), int(height));
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
     }
 
     bool KeyDown(int key_type) {
         return event.type == SDL_KEYDOWN &&
             event.key.keysym.sym == key_type;
-    }
-
-
-    EasySDL& SetSize(size_t width, size_t height) {
-        Canvas::SetSize(width, height);
-        SDL_CreateWindowAndRenderer(int(width), int(height), 0, &window, &renderer);
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, int(width), int(height));
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_SetWindowFullscreen(window, false);
-
-        return *this;
     }
 
     EasySDL& Render() {
