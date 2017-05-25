@@ -26,5 +26,11 @@
     <ClInclude Include="easysdl.hpp">
       <Filter>hpp</Filter>
     </ClInclude>
+    <ClInclude Include="canvas.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="canvas-context.hpp">
+      <Filter>hpp</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

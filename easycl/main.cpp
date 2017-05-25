@@ -37,8 +37,7 @@ int main(int argc, char** argv) {
         std::cin >> platform_id >> device_id;
 
         auto easysdl = EasySDL()
-            .Init()
-            .SetWindow(width, height);
+            .SetSize(width, height);
             //.SetWindowFullscreen();
 
         try {
@@ -46,16 +45,16 @@ int main(int argc, char** argv) {
                 .LoadDevice(platform_id, device_id)
                 .LoadSrc("shader.cl")
                 .LoadKernel("start")
-                .SetArg(0, easysdl.screen_buffer, easysdl.screen_buffer_size)
-                .SetArg(1, &easysdl.width)
-                .SetArg(2, &easysdl.height)
+                .SetArg(0, easysdl.context.screen_buffer, easysdl.context.screen_buffer_size)
+                .SetArg(1, &easysdl.context.width)
+                .SetArg(2, &easysdl.context.height)
                 .SetArg(3, &easysdl.timer);
 
             while (!easysdl.KeyDown(SDLK_ESCAPE)) {
                 easycl
                     .UpdateArg(3, &easysdl.timer)
-                    .Run(cl::NDRange(easysdl.width, easysdl.height), local_size)
-                    .ReadBuffer(0, easysdl.screen_buffer, easysdl.screen_buffer_size);
+                    .Run(cl::NDRange(easysdl.context.width, easysdl.context.height), local_size)
+                    .ReadBuffer(0, easysdl.context.screen_buffer, easysdl.context.screen_buffer_size);
 
                 easysdl
                     .Tick()
@@ -63,18 +62,16 @@ int main(int argc, char** argv) {
                     .SetTitle("FPS: " + std::to_string(easysdl.fps) + ", " +
                               "Time: " + std::to_string(easysdl.timer));
             }
-            easysdl.Destroy();
         }
         catch (std::string error) {
-            std::cout << "Failed with error: " << error << std::endl
-                << "Press any key to try again...\n";
-            easysdl.Destroy();
-
-            // Block console
-            std::cin.ignore();
-            std::cin.get();
-            system("cls");
+            std::cout << "Failed with error: " << error << std::endl;
         }
+
+        std::cout << "Press any key to try again..." << std::endl;
+        easysdl.Destroy();
+        std::cin.ignore();
+        std::cin.get();
+        system("cls");
     }
 
     return 0;

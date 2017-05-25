@@ -6,10 +6,10 @@
 
 #include <SDL.h>
 
-#include "renderer.hpp"
+#include "canvas.hpp"
 
 
-struct EasySDL : public Renderer {
+struct EasySDL : public Canvas {
 
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -22,16 +22,19 @@ struct EasySDL : public Renderer {
     clock_t frame_start;
     int fps;
 
-    ScreenContext screen_context;
-
-    void Render() {
-        
+    EasySDL() {
+        program_start = clock();
+        frame_start = clock();
+        delta_t = 0.0f;
+        fps = 0;
+        event = SDL_Event();
+        SDL_Init(SDL_INIT_VIDEO);
     }
 
     EasySDL& SetWindowFullscreen() {
         SDL_DisplayMode dm;
         SDL_GetDesktopDisplayMode(0, &dm);
-        return SetWindow(dm.w, dm.h);
+        return SetSize(dm.w, dm.h);
     }
 
     bool KeyDown(int key_type) {
@@ -39,34 +42,20 @@ struct EasySDL : public Renderer {
             event.key.keysym.sym == key_type;
     }
 
-    EasySDL& SetWindow(size_t w, size_t h, bool full_screen = false) {
-        screen_context.width = w;
-        screen_context.height = h;
-        screen_context.screen_buffer_size = w * h;
-        screen_context.screen_buffer = new Uint32[screen_context.screen_buffer_size];
 
-        SDL_CreateWindowAndRenderer(int(w), int(h), 0, &window, &renderer);
-        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, int(w), int(h));
+    EasySDL& SetSize(size_t width, size_t height) {
+        Canvas::SetSize(width, height);
+        SDL_CreateWindowAndRenderer(int(width), int(height), 0, &window, &renderer);
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, int(width), int(height));
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
-        SDL_SetWindowFullscreen(window, full_screen);
+        SDL_SetWindowFullscreen(window, false);
 
-
-        return *this;
-    }
-
-    EasySDL& Init() {
-        program_start = clock();
-        frame_start = clock();
-        delta_t = 0.0f;
-        fps = 0;
-        event = SDL_Event();
-        SDL_Init(SDL_INIT_VIDEO);
         return *this;
     }
 
     EasySDL& Render() {
-        SDL_UpdateTexture(texture, NULL, screen_context.screen_buffer,
-                          int(screen_context.width * sizeof(Uint32)));
+        SDL_UpdateTexture(texture, NULL, context.screen_buffer,
+                          int(context.width * sizeof(Uint32)));
         SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
 
@@ -93,10 +82,10 @@ struct EasySDL : public Renderer {
     }
 
     void Destroy() {
+        Cleanup();
         SDL_DestroyRenderer(renderer);
         SDL_DestroyWindow(window);
         SDL_DestroyTexture(texture);
-        delete[] screen_context.screen_buffer;
         SDL_Quit();
     }
 

@@ -160,6 +160,8 @@
   <ItemGroup>
     <ClInclude Include="easycl.hpp" />
     <ClInclude Include="easysdl.hpp" />
+    <ClInclude Include="canvas.hpp" />
+    <ClInclude Include="canvas-context.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.cl" />
