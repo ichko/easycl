@@ -38,37 +38,28 @@ int main(int argc, char** argv) {
         std::cout << std::endl << "Choose platform and device id (ex.: 0 1): " << std::endl;
         std::cin >> platform_id >> device_id;
 
-        auto easysdl = EasySDL(width, height);
+        auto canvas = ImageCanvas(width, height, "image.ppm");
+        int timer = 1;
 
         try {
             auto easycl = EasyCL()
                 .LoadDevice(platform_id, device_id)
                 .LoadSrc("shader.cl")
                 .LoadKernel("start")
-                .SetArg(0, easysdl.context.screen_buffer, easysdl.context.screen_buffer_size)
-                .SetArg(1, &easysdl.context.width)
-                .SetArg(2, &easysdl.context.height)
-                .SetArg(3, &easysdl.timer);
+                .SetArg(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size)
+                .SetArg(1, &canvas.context.width)
+                .SetArg(2, &canvas.context.height)
+                .SetArg(3, &timer)
+                .Run(cl::NDRange(canvas.context.width, canvas.context.height), local_size)
+                .ReadBuffer(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size);
 
-            while (!easysdl.KeyDown(SDLK_ESCAPE)) {
-                easycl
-                    .UpdateArg(3, &easysdl.timer)
-                    .Run(cl::NDRange(easysdl.context.width, easysdl.context.height), local_size)
-                    .ReadBuffer(0, easysdl.context.screen_buffer, easysdl.context.screen_buffer_size);
-
-                easysdl
-                    .Tick()
-                    .Render()
-                    .SetTitle("FPS: " + std::to_string(easysdl.fps) + ", " +
-                              "Time: " + std::to_string(easysdl.timer));
-            }
+            canvas.Render();
         }
         catch (std::string error) {
             std::cout << "Failed with error: " << error << std::endl;
         }
 
         std::cout << "Press any key to try again..." << std::endl;
-        easysdl.Destroy();
         std::cin.ignore();
         std::cin.get();
         system("cls");

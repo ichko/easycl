@@ -37,16 +37,21 @@ struct Canvas {
 struct ImageCanvas : public Canvas {
 
     std::ofstream image;
+    std::string file_name;
 
-    ImageCanvas(size_t width, size_t height,  std::string file_name) {
+    ImageCanvas(size_t width, size_t height,  std::string _file_name) {
         SetSize(width, height);
+        file_name = _file_name;
+    }
+
+    Canvas& Render() {
         image.open(file_name);
         image << "P3" << std::endl;
-        image << width << " " << height << std::endl;
+        image << context.width << " " << context.height << std::endl;
         image << 255 << std::endl;
-        for (size_t y = 0; y < height; y++) {
-            for (size_t x = 0; x < width; x++) {
-                int pixel = context.screen_buffer[y * width + x];
+        for (size_t y = 0; y < context.height; y++) {
+            for (size_t x = 0; x < context.width; x++) {
+                int pixel = context.screen_buffer[y * context.width + x];
                 int r = 0x000000ff & pixel;
                 int g = (0x0000ff00 & pixel) >> 8;
                 int b = (0x00ff0000 & pixel) >> 16;
@@ -54,10 +59,8 @@ struct ImageCanvas : public Canvas {
             }
         }
         image.close();
-    }
 
-    Canvas& Render() {
-        
+        return *this;
     }
 
 };
