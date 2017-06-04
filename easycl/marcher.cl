@@ -5,7 +5,7 @@ typedef struct {
 
 ray calc_ray(float2 uv, float time) {
     ray r;
-    r.o = (float3)(time, 0.0, 0.0);
+    r.o = (float3)(-3.0, 0.0, 0.0);
     //r.o = (float3)(time * 5, time * 5, -3.0);
     r.d = normalize((float3)(1.0, uv));
 
@@ -18,7 +18,7 @@ float sphere_de(float3 pos, float time) {
 }
 
 float mandelbulb_de(float3 pos, float time) {
-    pos = fmod(fabs(pos), 4.0) - 2.0;
+    // pos = fmod(fabs(pos), 4.0) - 2.0;
     float3 z = pos;
     float dr = 1.0;
     float r = 0.0;
@@ -41,7 +41,8 @@ float mandelbulb_de(float3 pos, float time) {
 
         // convert back to cartesian coordinates
         z = zr*(float3)(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
-        z += pos * cos(time * 2.0);
+        z += pos;
+        //z += pos * cos(time * 2.0);
     }
     return 0.5*log(r)*r / dr;
 }
@@ -49,8 +50,8 @@ float mandelbulb_de(float3 pos, float time) {
 float march(ray r, float time) {
     float total_dist = 0.0;
     int steps;
-    int max_ray_steps = 32;
-    float min_distance = 0.001;
+    int max_ray_steps = 64;
+    float min_distance = 0.002;
     for (steps = 0; steps < max_ray_steps; ++steps) {
         float3 p = r.o + total_dist * r.d;
         float distance = mandelbulb_de(p, time);

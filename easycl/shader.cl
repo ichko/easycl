@@ -3,7 +3,7 @@
 float3 shade(float2 uv, float time) {
     ray r = calc_ray(uv, time);
     float i = march(r, time);
-    return (float3)(i, 0, i / 3);
+    return (float3)(i, i, i);
 }
 
 void kernel start(
@@ -18,7 +18,7 @@ void kernel start(
     float ar = (float)*width / (float)*height;
     float2 uv = pos / min(*width, *height) - (float2)(ar * 0.5, 0.5);
 
-    float3 fcolor = shade(uv, *time) * 255;
+    float3 fcolor = 255 - shade(uv, *time) * 255;
     int icolor = ((int) fcolor.z << 16) + ((int) fcolor.y << 8) + (int) fcolor.x;
     screen_buffer[(int)(pos.y * *width + pos.x)] = icolor;
 }
