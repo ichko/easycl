@@ -27,12 +27,12 @@ int main(int argc, char** argv) {
         auto all_platforms = EasyCL::GetPlatforms();
         for (int i = 0; i < all_platforms.size(); i++) {
             std::cout << i << ") " <<
-                EasyCL::GetName<CL_PLATFORM_NAME>(all_platforms[i]) << std::endl;
+                all_platforms[i].getInfo<CL_PLATFORM_NAME>() << std::endl;
 
             auto all_devices = EasyCL::GetDevices(all_platforms[i]);
             for (int j = 0; j < all_devices.size(); j++) {
                 std::cout << "   " << j << ") "<<
-                    EasyCL::GetName<CL_DEVICE_NAME>(all_devices[j]) << std::endl;
+                    all_devices[j].getInfo<CL_DEVICE_NAME>() << std::endl;
             }
         }
 

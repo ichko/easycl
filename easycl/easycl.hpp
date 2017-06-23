@@ -96,7 +96,7 @@ struct EasyCL {
         return all_devices;
     }
 
-    template <cl_int T, typename O> static std::string GetName(O object) {
+    template <typename O> static std::string GetName(O object, cl_int T) {
         return object.getInfo<T>();
     }
 
