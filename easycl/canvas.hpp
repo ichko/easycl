@@ -21,7 +21,7 @@ struct Canvas {
         context.width = width;
         context.height = height;
         context.screen_buffer_size = width * height;
-        context.screen_buffer = new Uint32[context.screen_buffer_size];
+        context.screen_buffer = new int32[context.screen_buffer_size];
 
         return *this;
     }
