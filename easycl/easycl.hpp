@@ -96,9 +96,9 @@ struct EasyCL {
         return all_devices;
     }
 
-    template <typename O> static std::string GetName(O object, cl_int T) {
-        return object.getInfo<T>();
-    }
+    //template <typename O> static std::string GetName(O object, cl_int T) {
+    //    return object.getInfo<T>();
+    //}
 
     EasyCL& LoadDevice(size_t platform_id = 0, size_t device_id = 0) {
         error = 0;
