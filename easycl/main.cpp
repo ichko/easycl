@@ -1,29 +1,30 @@
 #include <iostream>
+#include <time.h>
 
 #include "easycl.hpp"
 #include "canvas.hpp"
-//#include "easysdl.hpp"
 
+// #include "easysdl.hpp"
 
 int main(int argc, char** argv) {
     while (true) {
         std::cout << "# Parallel programming" << std::endl << std::endl;
         int platform_id = 0, device_id = 1,
-            width = 150, height = 150,
+            width = 1024, height = 1024,
             local_size_width = 0, local_size_heihgt = 0;
         auto local_size = cl::NullRange;
 
-        std::cout << "Input size (width height): " << std::endl;
-        std::cin >> width >> height;
+        //std::cout << "Input size (width height): " << std::endl;
+        //std::cin >> width >> height;
 
         // std::cout << "Input local sizes (set -1 for default): " << std::endl;
         // std::cin >> local_size_width >> local_size_heihgt;
-        if (local_size_width > 0 || local_size_heihgt > 0) {
-            local_size = cl::NDRange(local_size_width, local_size_heihgt);
-        }
+        //if (local_size_width > 0 || local_size_heihgt > 0) {
+        //    local_size = cl::NDRange(local_size_width, local_size_heihgt);
+        //}
 
         // List paltforms and devices
-        std::cout << std::endl << std::endl << "Platforms and devices: " << std::endl;
+        std::cout << "Platforms and devices: " << std::endl;
         auto all_platforms = EasyCL::GetPlatforms();
         for (int i = 0; i < all_platforms.size(); i++) {
             std::cout << i << ") " <<
@@ -41,18 +42,29 @@ int main(int argc, char** argv) {
 
         auto canvas = ImageCanvas(width, height, "image.ppm");
         int timer = 1;
+        int count = 0;
 
         try {
-            auto easycl = EasyCL()
-                .LoadDevice(platform_id, device_id)
-                .LoadSrc("shader.cl")
-                .LoadKernel("start")
-                .SetArg(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size)
-                .SetArg(1, &canvas.context.width)
-                .SetArg(2, &canvas.context.height)
-                .SetArg(3, &timer)
-                .Run(cl::NDRange(canvas.context.width, canvas.context.height), local_size)
-                .ReadBuffer(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size);
+            std::cout << "Local size \t | Pixels per group \t | Time: " << std::endl;
+            for (size_t size = 1; size <= 256; size *= 2) {
+                local_size = cl::NDRange(1, size);
+
+                clock_t tStart = clock();
+
+                auto easycl = EasyCL()
+                    .LoadDevice(platform_id, device_id)
+                    .LoadSrc("shader.cl")
+                    .LoadKernel("start")
+                    .SetArg(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size)
+                    .SetArg(1, &canvas.context.width)
+                    .SetArg(2, &canvas.context.height)
+                    .SetArg(3, &timer)
+                    .Run(cl::NDRange(canvas.context.width, canvas.context.height), local_size)
+                    .ReadBuffer(0, canvas.context.screen_buffer, canvas.context.screen_buffer_size);
+
+                std::cout << count++ << ") " << size << "\t\t | " << size * size <<
+                    "\t\t | " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "sec." << std::endl;
+            }
 
             canvas.Render();
         }
@@ -69,8 +81,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
-// OpenCL Example
+// OpenCL SDL Example
 //int main(int argc, char** argv) {
 //    while (true) {
 //        std::cout << "# Parallel programming" << std::endl << std::endl;
